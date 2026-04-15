@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: gerenciamento-chamados
+
+  # Configurações de Banco de Dados
+  datasource:
+    url: jdbc:postgresql://localhost:5433/dunnas_condominio
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  # Configurações do Hibernate/JPA
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Configurações do Flyway
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  # Configurações para JSPs
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+
+  # CONFIGURAÇÃO PARA ANEXOS (Fotos dos Chamados)
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB      # Tamanho máximo de cada foto
+      max-request-size: 10MB   # Tamanho máximo do formulário completo
