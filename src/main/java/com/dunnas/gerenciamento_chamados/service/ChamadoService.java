@@ -103,4 +103,14 @@ public class ChamadoService {
     public void excluir(Long id) {
         chamadoRepository.deleteById(id);
     }
+
+    public List<Chamado> listarComFiltros(Usuario usuario, Long idFiltro, String statusFiltro) {
+        // Primeiro pegamos a lista base que o usuário tem permissão de ver
+        List<Chamado> listaBase = listarPorEscopo(usuario);
+
+        return listaBase.stream()
+                .filter(c -> idFiltro == null || c.getId().equals(idFiltro))
+                .filter(c -> statusFiltro == null || statusFiltro.isEmpty() || c.getStatus().equalsIgnoreCase(statusFiltro))
+                .toList();
+    }
 }

@@ -5,12 +5,13 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Novo Chamado | Dunnas</title>
+    <title>${not empty chamado.id ? 'Editar Chamado' : 'Novo Chamado'} - Dunnas</title>
     <style>
         :root {
             --verde-dunnas: #2d5a27;
             --marrom-dunnas: #4b3621;
             --fundo: #f4f7f1;
+            --branco: #ffffff;
             --danger: #c62828;
             --accent: #a5d6a7;
         }
@@ -18,91 +19,39 @@
 
         /* Sidebar Padronizada */
         .sidebar {
-            width: 250px;
-            background: var(--verde-dunnas);
-            height: 100vh;
-            color: white;
-            padding: 20px;
-            position: fixed;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            box-sizing: border-box;
+            width: 250px; background: var(--verde-dunnas); height: 100vh; color: white;
+            padding: 20px; position: fixed; box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; z-index: 1000; box-sizing: border-box;
         }
+        .sidebar h2 { font-size: 1.4em; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; margin-bottom: 20px; letter-spacing: 1px; }
 
-        .sidebar h2 {
-            font-size: 1.4em;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        /* Informações do Usuário Logado */
-        .user-info {
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            border-left: 4px solid var(--accent);
-        }
+        .user-info { padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; border-left: 4px solid var(--accent); }
         .user-info span { display: block; color: var(--accent); font-size: 0.75em; text-transform: uppercase; font-weight: bold; }
         .user-info strong { font-size: 1.1em; display: block; margin: 3px 0; overflow: hidden; text-overflow: ellipsis; }
 
-        .sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            border-radius: 5px;
-            transition: 0.3s;
-            font-size: 0.95em;
-            font-weight: 500;
-        }
-
-        .sidebar a:hover {
-            background: rgba(255,255,255,0.2);
-            padding-left: 20px;
-        }
-
-        .btn-logout {
-            background: var(--danger) !important;
-            margin-top: auto;
-            text-align: center;
-            font-weight: bold !important;
-        }
+        .sidebar a { display: block; color: white; text-decoration: none; padding: 12px 15px; margin-bottom: 8px; border-radius: 5px; transition: 0.3s; font-size: 0.95em; font-weight: 500; }
+        .sidebar a:hover { background: rgba(255,255,255,0.2); padding-left: 20px; }
+        .btn-logout { background: var(--danger) !important; margin-top: auto; text-align: center; font-weight: bold !important; }
 
         /* Main Content */
         .main { margin-left: 290px; padding: 40px; width: calc(100% - 330px); box-sizing: border-box; }
-
         h1 { color: var(--marrom-dunnas); margin: 0; font-size: 1.8em; }
         .subtitle { color: #666; margin-bottom: 30px; }
 
         /* Form Container */
         .form-container {
-            background: white;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 700px;
-            border-top: 5px solid var(--verde-dunnas);
+            background: white; padding: 35px; border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); width: 100%;
+            max-width: 700px; border-top: 5px solid var(--verde-dunnas);
         }
 
         .form-group { margin-bottom: 25px; }
         label { display: block; font-weight: bold; color: var(--marrom-dunnas); margin-bottom: 10px; }
-
         input, select, textarea {
             width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px;
             box-sizing: border-box; font-size: 1rem; transition: 0.3s; font-family: inherit;
         }
-
         input:focus, select:focus, textarea:focus { border-color: var(--verde-dunnas); outline: none; box-shadow: 0 0 8px rgba(45,90,39,0.1); }
-
         input[type="file"] { background: #fcfcfc; padding: 10px; border: 1px dashed #ccc; }
 
         .btn-submit {
@@ -110,16 +59,13 @@
             border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1em; width: 100%; transition: 0.3s;
         }
         .btn-submit:hover { background: #1e3d1a; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-
-        .btn-cancel { display: block; text-align: center; margin-top: 20px; color: #777; text-decoration: none; font-size: 0.95em; font-weight: 500; }
-        .btn-cancel:hover { color: var(--danger); text-decoration: underline; }
+        .btn-cancel { display: block; text-align: center; margin-top: 20px; color: #777; text-decoration: none; font-size: 0.95em; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
     <h2>CONDOMÍNIO DUNNAS</h2>
-
     <div class="user-info">
         <span>Conectado como:</span>
         <strong>${usuarioLogado.nome}</strong>
@@ -130,18 +76,18 @@
     <a href="/chamados/novo">➕ Abrir Chamado</a>
     <a href="/chamados">📋 Meus Chamados</a>
 
-    <a href="/logout" class="btn-logout"
-       onclick="return confirm('Tem certeza que deseja sair do sistema Condomínio Dunnas?')">
-        Sair do Sistema
-    </a>
+    <a href="/logout" class="btn-logout" onclick="return confirm('Sair do sistema?')">Sair do Sistema</a>
 </div>
 
 <div class="main">
-    <h1> Abrir Novo Chamado</h1>
-    <p class="subtitle">Preencha os detalhes abaixo para solicitar manutenção ou suporte técnico.</p>
+    <h1>${not empty chamado.id ? '✏️ Editar Chamado' : '➕ Abrir Novo Chamado'}</h1>
+    <p class="subtitle">Forneça as informações necessárias para que nossa equipe possa ajudar você.</p>
 
     <div class="form-container">
         <form:form action="/chamados/salvar" method="post" modelAttribute="chamado" enctype="multipart/form-data">
+
+            <%-- CAMPO OCULTO DO ID: Essencial para distinguir Criação de Edição --%>
+            <form:hidden path="id" />
 
             <div class="form-group">
                 <label>Onde está o problema? (Unidade):</label>
@@ -166,17 +112,24 @@
 
             <div class="form-group">
                 <label>Descrição Detalhada:</label>
-                <form:textarea path="descricao" rows="5" required="true" placeholder="Descreva o que está acontecendo com o máximo de detalhes possível..." />
+                <form:textarea path="descricao" rows="5" required="true" placeholder="Descreva os detalhes..." />
             </div>
 
             <div class="form-group">
-                <label>Anexar Evidência (Opcional):</label>
-                <input type="file" name="anexo" accept="image/*" />
-                <small style="color: #999; display: block; margin-top: 8px;">Dica: Uma foto ajuda o técnico a entender o problema mais rápido.</small>
+                <label>Anexar Evidência (Imagem ou PDF):</label>
+                    <%-- name="file" para sincronizar com o Controller e accept para PDF --%>
+                <input type="file" name="file" accept="image/*, .pdf" />
+                <c:if test="${not empty chamado.midiaUrl}">
+                    <p style="font-size: 0.8em; color: var(--verde-dunnas);">
+                        Arquivo atual: <strong>${chamado.midiaUrl}</strong> (suba outro para trocar)
+                    </p>
+                </c:if>
             </div>
 
-            <button type="submit" class="btn-submit">Enviar Solicitação</button>
-            <a href="/chamados/dashboard-morador" class="btn-cancel">Cancelar e voltar</a>
+            <button type="submit" class="btn-submit">
+                    ${not empty chamado.id ? 'Salvar Alterações' : 'Enviar Solicitação'}
+            </button>
+            <a href="/chamados" class="btn-cancel">Cancelar e voltar</a>
         </form:form>
     </div>
 </div>

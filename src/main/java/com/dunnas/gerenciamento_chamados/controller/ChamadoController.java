@@ -25,22 +25,6 @@ public class ChamadoController {
     private final ColaboradorService colaboradorService;
     private final AdministradorService administradorService;
 
-    @GetMapping
-    public String listar(Model model, HttpSession session) {
-        Usuario logado = (Usuario) session.getAttribute("usuarioLogado");
-        if (logado == null) return "redirect:/login";
-
-        Usuario logadoCompleto = logado;
-        if (logado instanceof Colaborador) logadoCompleto = colaboradorService.buscarPorId(logado.getId());
-        else if (logado instanceof Morador) logadoCompleto = moradorService.buscarPorId(logado.getId());
-        else if (logado instanceof Administrador) logadoCompleto = administradorService.buscarPorId(logado.getId());
-
-        model.addAttribute("chamados", chamadoService.listarPorEscopo(logadoCompleto));
-        model.addAttribute("usuarioLogado", logadoCompleto);
-        model.addAttribute("perfil", session.getAttribute("perfil"));
-
-        return "lista-chamados";
-    }
 
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute("chamado") Chamado chamado,
@@ -56,17 +40,43 @@ public class ChamadoController {
                 chamado.setMorador((Morador) logado);
             }
 
-            // A mágica acontece aqui: Controller apenas repassa o arquivo para o Service
             chamadoService.salvar(chamado, file);
 
             attr.addFlashAttribute("mensagemSucesso", isNovo ? "Chamado registrado com sucesso!" : "Chamado atualizado!");
             return (logado instanceof Morador) ? "redirect:/chamados/dashboard-morador" : "redirect:/chamados";
 
         } catch (Exception e) {
-            e.printStackTrace(); // Log no console para debug
+            e.printStackTrace();
             attr.addFlashAttribute("mensagemErro", "Erro ao processar chamado: " + e.getMessage());
             return "redirect:/chamados";
         }
+    }
+
+    @GetMapping("/editar/{id}")
+    public String exibirEdicao(@PathVariable Long id, Model model, HttpSession session) {
+        Usuario logado = (Usuario) session.getAttribute("usuarioLogado");
+        if (logado == null) return "redirect:/login";
+
+        Chamado chamado = chamadoService.buscarPorId(id);
+        String perfil = (String) session.getAttribute("perfil");
+
+        // Regra de Segurança: Morador só edita o próprio chamado e se ainda estiver ABERTO
+        if ("MORADOR".equals(perfil)) {
+            if (!chamado.getMorador().getId().equals(logado.getId()) || !"ABERTO".equals(chamado.getStatus())) {
+                return "redirect:/chamados?mensagemErro=Edicao+nao+permitida";
+            }
+            model.addAttribute("unidadesDoMorador", moradorService.buscarPorId(logado.getId()).getUnidades());
+        } else if ("ADMIN".equals(perfil)) {
+            model.addAttribute("moradores", moradorService.listarTodos());
+            model.addAttribute("unidades", unidadeService.listarTodas());
+        }
+
+        model.addAttribute("chamado", chamado);
+        model.addAttribute("categorias", categoriaService.listarTodas());
+        model.addAttribute("usuarioLogado", logado);
+        model.addAttribute("perfil", perfil);
+
+        return "novo-chamado-morador";
     }
 
     @GetMapping("/detalhes/{id}")
@@ -151,13 +161,35 @@ public class ChamadoController {
     }
 
     @PostMapping("/comentar")
-    public String adicionarComentario(@RequestParam Long chamadoId, @RequestParam String texto, HttpSession session) {
+    public String adicionarComentario(@RequestParam Long chamadoId,
+                                      @RequestParam String texto,
+                                      HttpSession session,
+                                      RedirectAttributes attr) {
         Usuario logado = (Usuario) session.getAttribute("usuarioLogado");
+        if (logado == null) return "redirect:/login";
+
+        Chamado chamado = chamadoService.buscarPorId(chamadoId);
+        String perfil = (String) session.getAttribute("perfil");
+
+        // REQUISITO DE SEGURANÇA: Validar escopo do morador
+        if ("MORADOR".equals(perfil)) {
+            // Verifica se o chamado pertence ao morador logado
+            if (!chamado.getMorador().getId().equals(logado.getId())) {
+                attr.addFlashAttribute("mensagemErro", "Ação não permitida: Este chamado não pertence a você.");
+                return "redirect:/chamados";
+            }
+        }
+        // Adicione aqui lógica para Colaborador se ele tiver categorias específicas,
+        // mas geralmente colaboradores podem comentar em tudo que visualizam.
+
         Comentario com = new Comentario();
         com.setTexto(texto);
         com.setAutor(logado);
-        com.setChamado(chamadoService.buscarPorId(chamadoId));
+        com.setChamado(chamado);
+        com.setDataCriacao(LocalDateTime.now()); // Garante a data atual
+
         chamadoService.salvarComentario(com);
+
         return "redirect:/chamados/detalhes/" + chamadoId;
     }
 
@@ -166,5 +198,30 @@ public class ChamadoController {
         chamadoService.excluir(id);
         attr.addFlashAttribute("mensagemSucesso", "Chamado removido!");
         return "redirect:/chamados";
+    }
+
+    // DEIXE APENAS ESTE MÉTODO LISTAR NO SEU CONTROLLER:
+    @GetMapping
+    public String listar(@RequestParam(required = false) Long id,
+                         @RequestParam(required = false) String status,
+                         Model model, HttpSession session) {
+        Usuario logado = (Usuario) session.getAttribute("usuarioLogado");
+        if (logado == null) return "redirect:/login";
+
+        Usuario logadoCompleto = logado;
+        if (logado instanceof Colaborador) {
+            logadoCompleto = colaboradorService.buscarPorId(logado.getId());
+        } else if (logado instanceof Morador) {
+            logadoCompleto = moradorService.buscarPorId(logado.getId());
+        } else if (logado instanceof Administrador) {
+            logadoCompleto = administradorService.buscarPorId(logado.getId());
+        }
+
+        // Chama o service usando os filtros (id e status)
+        model.addAttribute("chamados", chamadoService.listarComFiltros(logadoCompleto, id, status));
+        model.addAttribute("usuarioLogado", logadoCompleto);
+        model.addAttribute("perfil", session.getAttribute("perfil"));
+
+        return "lista-chamados";
     }
 }
