@@ -8,7 +8,8 @@ CREATE TABLE blocos (
 CREATE TABLE unidades (
                           id BIGSERIAL PRIMARY KEY,
                           identificacao VARCHAR(50) NOT NULL,
-                          bloco_id BIGINT NOT NULL REFERENCES blocos(id)
+                          andar INTEGER,
+                          bloco_id BIGINT NOT NULL REFERENCES blocos(id) ON DELETE CASCADE
 );
 
 CREATE TABLE usuarios (

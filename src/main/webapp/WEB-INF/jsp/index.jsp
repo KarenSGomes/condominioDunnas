@@ -136,7 +136,7 @@
 </div>
 
 <div class="main">
-    <h1 class="section-title">Bem-vinda(o), ${usuarioLogado.nome}! </h1>
+    <h1 class="section-title">Bem-vindo(a), ${usuarioLogado.nome}! </h1>
 
     <c:choose>
         <c:when test="${perfil == 'ADMIN'}">
@@ -152,10 +152,6 @@
                 <div class="card">
                     <h3>Chamados Abertos</h3>
                     <p>${totalChamadosAbertos}</p>
-                </div>
-                <div class="card">
-                    <h3>SLA Crítico</h3>
-                    <p style="color: var(--danger)">${chamadosAtrasados}</p>
                 </div>
             </div>
 
