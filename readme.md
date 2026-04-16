@@ -17,10 +17,10 @@ O sistema foi projetado com foco em:
 
 Para atender aos requisitos propostos, foi selecionada a **Opção 2** de stack tecnológica:
 
-**Backend:** Java com Spring Boot, utilizando o padrão MVC. 
-**Frontend:** Java Server Pages (JSP) para renderização dinâmica das interfaces
-**Banco de Dados:** PostgreSQL para persistência de dados relacionais
-**Versionamento de Banco:** Flyway, garantindo que a estrutura possa ser recriada do zero de forma consistente
+* **Backend:** Java com Spring Boot, utilizando o padrão MVC. 
+* **Frontend:** Java Server Pages (JSP) para renderização dinâmica das interfaces
+* **Banco de Dados:** PostgreSQL para persistência de dados relacionais
+* **Versionamento de Banco:** Flyway, garantindo que a estrutura possa ser recriada do zero de forma consistente
 
 ---
 
@@ -114,11 +114,6 @@ gerenciamento-chamados/
 ```
 
 ---
-Para tornar esta seção mais robusta e profissional, vamos detalhar o **papel estratégico** de cada migração e como elas garantem a integridade do sistema. Isso demonstra que você entende de versionamento de banco de dados e ciclo de vida de desenvolvimento.
-
-Aqui está uma versão aprimorada para o seu README:
-
----
 
 ### Arquitetura e Versionamento de Banco de Dados
 
@@ -145,7 +140,7 @@ O projeto utiliza o **PostgreSQL** como motor de persistência, com a evolução
 
 ## Modelagem de Dados (Diagrama Relacional)
 
-Conforme solicitado no desafio, a estrutura do banco de dados foi modelada para suportar a herança de usuários e os relacionamentos entre unidades e chamados.
+A estrutura do banco de dados foi modelada para suportar a herança de usuários e os relacionamentos entre unidades e chamados.
 
 ![diagramaCondDunnas.png](assets/diagramaCondDunnas.png)
 
@@ -169,10 +164,6 @@ O diagrama reflete uma arquitetura relacional projetada para garantir a integrid
 
 * **Histórico de Comunicação (`COMENTARIO`)**
   Relaciona-se com o **Chamado** e o **Usuário autor**, compondo o histórico de interações, respeitando as permissões de cada perfil.
-
-Para tornar o seu **README.md** mais didático e profissional para o avaliador da Dunnas, vamos detalhar o processo de execução focando na infraestrutura e na conectividade entre os serviços.
-
-Explicar o porquê da porta **5433** e como o Spring Boot interage com o container demonstra que você domina o ambiente de desenvolvimento.
 
 ---
 
@@ -199,7 +190,7 @@ docker compose up -d
 #### 2. Execução da Aplicação (Spring Boot)
 Com o banco de dados ativo, a aplicação Java assume o controle para criar a estrutura de tabelas e iniciar o servidor web.
 
-**Via Maven Wrapper (Recomendado):**
+**Via Maven Wrapper:**
 Se você não tem o Maven instalado globalmente, use o executável incluso no projeto:
 ```bash
 ./mvnw spring-boot:run
@@ -214,7 +205,7 @@ mvn spring-boot:run
 1.  **Conectividade:** O Spring Boot lê as propriedades no `application.yaml` e conecta-se ao container Docker na porta `5433`.
 2.  **Flyway Migrations:** O sistema detecta que o banco está vazio e executa automaticamente os scripts SQL (V1 a V4), criando tabelas e inserindo os dados de teste (usuários e categorias).
 3.  **Servidor Web:** O servidor Tomcat embutido é iniciado. Após a mensagem `Started GerenciamentoChamadosApplication`, o sistema estará disponível em:
-  * 👉 **URL:** `http://localhost:8080`
+  *  **URL:** `http://localhost:8080`
 
 #### Encerrando o Ambiente
 Para parar o banco de dados e remover os containers após os testes, utilize:
@@ -256,8 +247,6 @@ Além dos requisitos básicos, este projeto entrega:
 1.  **Trava de Segurança:** Impedimento de exclusão do último administrador do sistema no `AdministradorService`.
 2.  **Validação de Dados:** Uso de `jakarta.validation` para garantir que campos como e-mail, nomes e prazos de SLA sejam sempre válidos.
 3.  **Clean Code:** Separação clara de responsabilidades entre Controllers, Services e Repositories, facilitando a manutenção futura.
-
----
 
 -----
 
