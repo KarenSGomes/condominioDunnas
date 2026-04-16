@@ -129,7 +129,19 @@ public class ChamadoController {
 
         model.addAttribute("colaborador", colab);
         model.addAttribute("chamados", chamadosEscopo);
-        model.addAttribute("qtdNovos", chamadosEscopo.stream().filter(c -> "ABERTO".equals(c.getStatus())).count());
+
+        // 1. Contagem de Novos (Status Aberto)
+        model.addAttribute("qtdNovos", chamadosEscopo.stream()
+                .filter(c -> "ABERTO".equalsIgnoreCase(c.getStatus())).count());
+
+        // 2. ADICIONE ESTA LINHA: Contagem de Em Atendimento
+        model.addAttribute("qtdAndamento", chamadosEscopo.stream()
+                .filter(c -> "EM_ATENDIMENTO".equalsIgnoreCase(c.getStatus()) || "EM_ANDAMENTO".equalsIgnoreCase(c.getStatus())).count());
+
+        // 3. ADICIONE ESTA LINHA: Contagem de Finalizados
+        model.addAttribute("qtdFinalizados", chamadosEscopo.stream()
+                .filter(c -> "CONCLUIDO".equalsIgnoreCase(c.getStatus())).count());
+
         model.addAttribute("perfil", "COLABORADOR");
         model.addAttribute("usuarioLogado", colab);
         return "dashboard-colaborador";

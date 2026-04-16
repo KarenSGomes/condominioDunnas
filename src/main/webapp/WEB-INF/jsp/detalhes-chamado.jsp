@@ -230,7 +230,7 @@
             </div>
 
             <div class="card">
-                <h3>👤 Solicitante e Local</h3>
+                <h3> Solicitante e Local</h3>
                 <div class="info-group"><span class="info-label">Morador</span><span class="info-value"><strong>${chamado.morador.nome}</strong></span></div>
                 <div class="info-group"><span class="info-label">Unidade</span><span class="info-value">${chamado.unidade.identificacao}</span></div>
                 <div class="info-group"><span class="info-label">Categoria</span><span class="info-value">${chamado.categoria.nome}</span></div>

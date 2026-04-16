@@ -145,7 +145,7 @@
 </div>
 
 <div class="main">
-    <h1>🏢 Gestão de Blocos e Unidades</h1>
+    <h1> Gestão de Blocos e Unidades</h1>
     <p class="subtitle">Administre os blocos e as unidades habitacionais geradas automaticamente.</p>
 
     <%-- Mensagens de Feedback --%>
